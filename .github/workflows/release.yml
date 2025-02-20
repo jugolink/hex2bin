@@ -28,19 +28,28 @@ jobs:
           cd build
           cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=Release
           cmake --build .
-          # 验证文件是否存在
-          ls -la bin/
+          # 验证构建输出
+          find . -name "hex2bin*"
+      
+      - name: Create LICENSE
+        run: |
+          echo "MIT License" > LICENSE
+          echo "" >> LICENSE
+          echo "Copyright (c) 2024" >> LICENSE
+          echo "" >> LICENSE
+          echo "Permission is hereby granted, free of charge, to any person obtaining a copy" >> LICENSE
       
       - name: Package
-        shell: msys2 {0}  # 使用 MSYS2 shell 来处理文件操作
+        shell: msys2 {0}
         run: |
           mkdir -p hex2bin-windows
-          cp build/bin/hex2bin.exe hex2bin-windows/ || exit 1
+          # 查找并复制可执行文件
+          find build -name "hex2bin.exe" -exec cp {} hex2bin-windows/ \;
           cp README.md hex2bin-windows/ || exit 1
           cp LICENSE hex2bin-windows/ || exit 1
-          # 验证文件是否复制成功
+          # 验证文件
           ls -la hex2bin-windows/
-
+      
       - name: Upload Windows Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -57,22 +66,31 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y cmake ninja-build
       
+      - name: Create LICENSE
+        run: |
+          echo "MIT License" > LICENSE
+          echo "" >> LICENSE
+          echo "Copyright (c) 2024" >> LICENSE
+          echo "" >> LICENSE
+          echo "Permission is hereby granted, free of charge, to any person obtaining a copy" >> LICENSE
+      
       - name: Build
         run: |
           mkdir -p build
           cd build
           cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=Release
           cmake --build .
-          # 验证文件是否存在
-          ls -la bin/
+          # 验证构建输出
+          find . -name "hex2bin*"
       
       - name: Package
         run: |
           mkdir -p hex2bin-linux
-          cp build/bin/hex2bin hex2bin-linux/ || exit 1
+          # 查找并复制可执行文件
+          find build -name "hex2bin" -exec cp {} hex2bin-linux/ \;
           cp README.md hex2bin-linux/ || exit 1
           cp LICENSE hex2bin-linux/ || exit 1
-          # 验证文件是否复制成功
+          # 验证文件
           ls -la hex2bin-linux/
       
       - name: Upload Linux Artifact
