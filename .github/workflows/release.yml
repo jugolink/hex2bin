@@ -5,6 +5,11 @@ on:
     tags:
       - 'v*' # 触发标签格式为 v1.0.0 这样的版本号
 
+# 添加权限配置
+permissions:
+  contents: write  # 添加写入权限用于创建发布
+  packages: read
+
 jobs:
   build-windows:
     runs-on: windows-latest
@@ -30,14 +35,6 @@ jobs:
           cmake --build .
           # 验证构建输出
           find . -name "hex2bin*"
-      
-      - name: Create LICENSE
-        run: |
-          echo "MIT License" > LICENSE
-          echo "" >> LICENSE
-          echo "Copyright (c) 2024" >> LICENSE
-          echo "" >> LICENSE
-          echo "Permission is hereby granted, free of charge, to any person obtaining a copy" >> LICENSE
       
       - name: Package
         shell: msys2 {0}
@@ -65,14 +62,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y cmake ninja-build
-      
-      - name: Create LICENSE
-        run: |
-          echo "MIT License" > LICENSE
-          echo "" >> LICENSE
-          echo "Copyright (c) 2024" >> LICENSE
-          echo "" >> LICENSE
-          echo "Permission is hereby granted, free of charge, to any person obtaining a copy" >> LICENSE
       
       - name: Build
         run: |
@@ -102,6 +91,8 @@ jobs:
   create-release:
     needs: [build-windows, build-linux]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # 为这个 job 特别设置权限
     steps:
       - name: Download all artifacts
         uses: actions/download-artifact@v4

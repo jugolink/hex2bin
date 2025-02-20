@@ -19,7 +19,7 @@ add_executable(hex2bin main.cpp)
 set_target_properties(hex2bin PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/bin"
-    OUTPUT_NAME "hex2bin${OUTPUT_SUFFIX}"
+    OUTPUT_NAME "hex2bin"
 )
 
 # 根据平台和编译器设置特定选项

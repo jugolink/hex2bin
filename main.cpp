@@ -63,10 +63,6 @@ bool convert_hex_to_bin(const std::string& hex_path, const std::string& bin_path
 
         uint8_t record_type = bytes[3];
         switch (record_type) {
-            case 0x04: // 扩展线性地址记录
-                addr_h = (bytes[4] << 24) | (bytes[5] << 16);
-                break;
-
             case 0x00: // 数据记录
             {
                 uint16_t addr_l = (bytes[1] << 8) | bytes[2];
@@ -89,11 +85,25 @@ bool convert_hex_to_bin(const std::string& hex_path, const std::string& bin_path
                 std::cout << "Total size: " << bin_buffer.size() << " Bytes\n";
                 break;
 
+            case 0x02: // 扩展段地址记录
+                addr_h = ((bytes[4] << 8) | bytes[5]) << 4;
+                break;
+
+            case 0x03: // 开始段地址记录
+                // 通常可以忽略
+                break;
+
+            case 0x04: // 扩展线性地址记录
+                addr_h = (bytes[4] << 24) | (bytes[5] << 16);
+                break;
+
             case 0x05: // 开始线性地址记录
+                // 通常可以忽略
                 break;
 
             default:
-                std::cerr << "Error: Unknown record type\n";
+                std::cerr << "Error: Unknown record type 0x" << std::hex << static_cast<int>(record_type) 
+                         << " at line: " << std::dec << line << std::endl;
                 return false;
         }
     }
