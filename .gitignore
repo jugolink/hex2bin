@@ -1,0 +1,46 @@
+# Build directories
+build/
+out/
+
+# IDE specific files
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.sdf
+*.opensdf
+*.sln
+*.vcxproj
+*.vcxproj.filters
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+compile_commands.json
+Makefile
+*.cmake
+
+# Binary files
+*.exe
+*.out
+*.app
+*.dll
+*.so
+*.dylib
+
+# Reference implementation files
+tobin.py
+src_rc.py
+
+# Temporary files
+*.swp
+*~
+.DS_Store
+
+# Debug files
+*.pdb
+*.ilk
+*.exp
+*.lib

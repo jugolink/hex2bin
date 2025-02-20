@@ -1,0 +1,65 @@
+{
+    "version": 3,
+    "configurePresets": [
+        {
+            "name": "windows-base",
+            "hidden": true,
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/windows",
+            "cacheVariables": {
+                "CMAKE_SYSTEM_NAME": "Windows",
+                "CMAKE_CXX_COMPILER": "cl"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "windows-x64",
+            "displayName": "Windows x64",
+            "inherits": "windows-base",
+            "architecture": {
+                "value": "x64",
+                "strategy": "external"
+            }
+        },
+        {
+            "name": "linux-base",
+            "hidden": true,
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/linux",
+            "cacheVariables": {
+                "CMAKE_SYSTEM_NAME": "Linux",
+                "CMAKE_CXX_COMPILER": "g++"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            }
+        },
+        {
+            "name": "linux-x64",
+            "displayName": "Linux x64",
+            "inherits": "linux-base",
+            "architecture": {
+                "value": "x64",
+                "strategy": "external"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "windows-x64",
+            "configurePreset": "windows-x64",
+            "configuration": "Release"
+        },
+        {
+            "name": "linux-x64",
+            "configurePreset": "linux-x64",
+            "configuration": "Release"
+        }
+    ]
+}
