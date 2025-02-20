@@ -24,18 +24,23 @@ jobs:
       - name: Build
         shell: msys2 {0}
         run: |
-          mkdir build
+          mkdir -p build
           cd build
           cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=Release
           cmake --build .
+          # 验证文件是否存在
+          ls -la bin/
       
       - name: Package
+        shell: msys2 {0}  # 使用 MSYS2 shell 来处理文件操作
         run: |
-          mkdir hex2bin-windows
-          cp build/bin/hex2bin.exe hex2bin-windows/
-          cp README.md hex2bin-windows/
-          cp LICENSE hex2bin-windows/
-      
+          mkdir -p hex2bin-windows
+          cp build/bin/hex2bin.exe hex2bin-windows/ || exit 1
+          cp README.md hex2bin-windows/ || exit 1
+          cp LICENSE hex2bin-windows/ || exit 1
+          # 验证文件是否复制成功
+          ls -la hex2bin-windows/
+
       - name: Upload Windows Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -54,17 +59,21 @@ jobs:
       
       - name: Build
         run: |
-          mkdir build
+          mkdir -p build
           cd build
           cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=Release
           cmake --build .
+          # 验证文件是否存在
+          ls -la bin/
       
       - name: Package
         run: |
-          mkdir hex2bin-linux
-          cp build/bin/hex2bin hex2bin-linux/
-          cp README.md hex2bin-linux/
-          cp LICENSE hex2bin-linux/
+          mkdir -p hex2bin-linux
+          cp build/bin/hex2bin hex2bin-linux/ || exit 1
+          cp README.md hex2bin-linux/ || exit 1
+          cp LICENSE hex2bin-linux/ || exit 1
+          # 验证文件是否复制成功
+          ls -la hex2bin-linux/
       
       - name: Upload Linux Artifact
         uses: actions/upload-artifact@v4
