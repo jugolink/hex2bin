@@ -22,16 +22,19 @@ set_target_properties(hex2bin PROPERTIES
     OUTPUT_NAME "hex2bin${OUTPUT_SUFFIX}"
 )
 
-# 根据平台设置特定选项
+# 根据平台和编译器设置特定选项
 if(WIN32)
-    # Windows 特定设置
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
     if(MSVC)
+        # MSVC 编译器选项
+        target_compile_options(hex2bin PRIVATE /W4)
         add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+    else()
+        # MinGW 编译器选项
+        target_compile_options(hex2bin PRIVATE -Wall -Wextra)
     endif()
 else()
-    # Linux/Unix 特定设置
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
+    # Linux/Unix 编译器选项
+    target_compile_options(hex2bin PRIVATE -Wall -Wextra)
 endif()
 
 # 安装规则
