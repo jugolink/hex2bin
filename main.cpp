@@ -6,6 +6,7 @@
 #include <numeric>
 #include <cstdint>
 #include <algorithm>
+#include "version.h"
 
 // 字符转16进制数值
 uint8_t char_to_hex(char c) {
@@ -139,11 +140,13 @@ bool convert_hex_to_bin(const std::string& hex_path, const std::string& bin_path
 }
 
 void print_help(const char* program_name) {
-    std::cout << "HEX to BIN Converter - Command Line Tool\n"
+    std::cout << "HEX to BIN Converter v" << HEX2BIN_VERSION << " - Command Line Tool\n"
+              << "Author: " << HEX2BIN_AUTHOR << "\n"
               << "================================\n\n"
               << "Usage:\n"
               << "  " << program_name << " <input.hex> [output.bin] [special_mode]\n"
-              << "  " << program_name << " --help\n\n"
+              << "  " << program_name << " --help\n"
+              << "  " << program_name << " --version\n\n"
               << "Arguments:\n"
               << "  input.hex    Input Intel HEX format file\n"
               << "  output.bin   Output binary file (optional)\n"
@@ -154,6 +157,13 @@ void print_help(const char* program_name) {
               << "  " << program_name << " input.hex\n"
               << "  " << program_name << " input.hex output.bin\n"
               << "  " << program_name << " input.hex output.bin true\n";
+}
+
+void print_version() {
+    std::cout << "HEX to BIN Converter v" << HEX2BIN_VERSION << "\n"
+              << "Author: " << HEX2BIN_AUTHOR << "\n"
+              << "Build Time: " << HEX2BIN_BUILD_TIME << "\n"
+              << "Git Commit: " << HEX2BIN_GIT_HASH << "\n";
 }
 
 std::string get_desktop_path() {
@@ -173,6 +183,9 @@ int main(int argc, char* argv[]) {
     std::string arg1 = argv[1];
     if (arg1 == "--help" || arg1 == "-h") {
         print_help(argv[0]);
+        return 0;
+    } else if (arg1 == "--version" || arg1 == "-v") {
+        print_version();
         return 0;
     }
 

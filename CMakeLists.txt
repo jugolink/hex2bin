@@ -1,9 +1,38 @@
 cmake_minimum_required(VERSION 3.10.0)
-project(hex2bin VERSION 0.1.0 LANGUAGES CXX)
+project(hex2bin VERSION 1.0.0 LANGUAGES CXX)
+
+# 获取 Git 提交哈希
+find_package(Git QUIET)
+if(GIT_FOUND)
+    execute_process(
+        COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        OUTPUT_VARIABLE GIT_HASH
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+else()
+    set(GIT_HASH "unknown")
+endif()
+
+# 获取构建时间戳
+string(TIMESTAMP BUILD_TIMESTAMP "%Y-%m-%d %H:%M:%S")
+
+# 配置版本信息头文件
+configure_file(
+    "${PROJECT_SOURCE_DIR}/include/version.h.in"
+    "${PROJECT_BINARY_DIR}/include/version.h"
+    @ONLY
+)
 
 # 设置 C++ 标准
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# 添加包含目录
+include_directories(
+    ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_BINARY_DIR}/include
+)
 
 # 设置平台特定的输出名称
 if(WIN32)
