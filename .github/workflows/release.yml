@@ -1,0 +1,96 @@
+name: Release Build
+
+on:
+  push:
+    tags:
+      - 'v*' # 触发标签格式为 v1.0.0 这样的版本号
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: >-
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-ninja
+            mingw-w64-x86_64-gcc
+      
+      - name: Build
+        shell: msys2 {0}
+        run: |
+          mkdir build
+          cd build
+          cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=Release
+          cmake --build .
+      
+      - name: Package
+        run: |
+          mkdir hex2bin-windows
+          cp build/bin/hex2bin.exe hex2bin-windows/
+          cp README.md hex2bin-windows/
+          cp LICENSE hex2bin-windows/
+      
+      - name: Upload Windows Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: hex2bin-windows
+          path: hex2bin-windows/
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build
+      
+      - name: Build
+        run: |
+          mkdir build
+          cd build
+          cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=Release
+          cmake --build .
+      
+      - name: Package
+        run: |
+          mkdir hex2bin-linux
+          cp build/bin/hex2bin hex2bin-linux/
+          cp README.md hex2bin-linux/
+          cp LICENSE hex2bin-linux/
+      
+      - name: Upload Linux Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: hex2bin-linux
+          path: hex2bin-linux/
+
+  create-release:
+    needs: [build-windows, build-linux]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v3
+      
+      - name: Create ZIP archives
+        run: |
+          zip -r hex2bin-windows.zip hex2bin-windows/
+          zip -r hex2bin-linux.zip hex2bin-linux/
+      
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            hex2bin-windows.zip
+            hex2bin-linux.zip
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
