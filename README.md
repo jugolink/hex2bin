@@ -46,7 +46,7 @@ hex2bin --version
 版本信息输出示例：
 ```bash
 HEX to BIN Converter v1.0.0
-Author: Your Name
+Author: XXX
 Build Time: 2024-02-20 15:30:45
 Git Commit: abc1234
 ```
@@ -55,70 +55,44 @@ Git Commit: abc1234
 
 ### Windows 构建 🪟
 
-#### 环境要求
-- MSYS2
-- CMake 3.10+
-- MinGW-w64 (通过 MSYS2 安装)
+#### 方法1：使用预编译的可执行文件
+从 Releases 页面下载最新的发布版本，包含所有必要的依赖。
 
-#### 安装依赖
-```bash
-# 在 MSYS2 MINGW64 终端中执行
-pacman -Syu
-pacman -S mingw-w64-x86_64-cmake mingw-w64-x86_64-ninja mingw-w64-x86_64-gcc
-```
+#### 方法2：从源码构建（静态链接）
 
-#### 构建步骤
 ```bash
 # 在 MSYS2 MINGW64 终端中执行
 mkdir build && cd build
 cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=Release
 cmake --build .
 ```
-
-构建完成后，可执行文件位于：`build/bin/hex2bin.exe`
 
 ### Linux 构建 🐧
 
-#### 环境要求
-- GCC/G++ 支持 C++17
-- CMake 3.10+
-- Ninja (推荐)
+#### 方法1：使用预编译的可执行文件
+从 Releases 页面下载最新的发布版本，包含所有必要的依赖。
 
-#### 安装依赖
-```bash
-# Ubuntu/Debian
-sudo apt update
-sudo apt install build-essential cmake ninja-build
+#### 方法2：从源码构建（静态链接）
 
-# Fedora
-sudo dnf install gcc-c++ cmake ninja-build
-
-# Arch Linux
-sudo pacman -S base-devel cmake ninja
-```
-
-#### 构建步骤
 ```bash
 mkdir build && cd build
 cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=Release
 cmake --build .
 ```
 
-构建完成后，可执行文件位于：`build/bin/hex2bin`
+## 📦 发布包内容
 
-## 📂 输出文件位置
-
-构建完成后，可执行文件将位于：
-
-- Windows: `build/windows/bin/hex2bin.exe`
-- Linux: `build/linux/bin/hex2bin`
+预编译的发布包包含：
+- hex2bin 可执行文件（静态链接，无需额外依赖）
+- README.md
+- LICENSE
+- 示例文件（可选）
 
 ## 🔍 注意事项
 
-1. 确保输入文件是有效的 Intel HEX 格式
-2. 如果未指定输出文件，程序将在桌面创建同名的 .bin 文件
-3. 特殊模式会在输出文件开头添加 1024 个 0 字节
-4. 程序会自动进行校验和检查，确保数据完整性
+1. 预编译的可执行文件已经静态链接了所有必要的依赖
+2. 无需安装额外的运行时库
+3. Windows版本包含完整的版本信息和文件属性
 
 ## 📝 许可证
 

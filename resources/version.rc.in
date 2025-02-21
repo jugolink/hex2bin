@@ -1,0 +1,32 @@
+#include <windows.h>
+
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION     @RC_VERSION@
+PRODUCTVERSION  @RC_VERSION@
+FILEFLAGSMASK   VS_FFI_FILEFLAGSMASK
+FILEFLAGS       0
+FILEOS          VOS_NT_WINDOWS32
+FILETYPE        VFT_APP
+FILESUBTYPE     0
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904E4"
+        BEGIN
+            VALUE "CompanyName",      "Evek Software\0"
+            VALUE "FileDescription",  "HEX to BIN File Converter\0"
+            VALUE "FileVersion",      "@FILE_VERSION@\0"
+            VALUE "InternalName",     "hex2bin\0"
+            VALUE "LegalCopyright",   "Copyright © 2025 Evek. All rights reserved.\0"
+            VALUE "OriginalFilename", "hex2bin.exe\0"
+            VALUE "ProductName",      "HEX to BIN Converter\0"
+            VALUE "ProductVersion",   "@FILE_VERSION@\0"
+            VALUE "Comments",         "A tool for converting Intel HEX files to binary format\0"
+            VALUE "LegalTrademarks",  "Evek™\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1252
+    END
+END 
