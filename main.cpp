@@ -6,6 +6,7 @@
 #include <numeric>
 #include <cstdint>
 #include <algorithm>
+#include <iomanip>
 #include "version.h"
 
 // 字符转16进制数值
@@ -37,8 +38,11 @@ bool verify_checksum(const std::vector<uint8_t>& line) {
     return ((0x100 - (sum % 256)) % 256) == line.back();
 }
 
+// 在文件开头添加
+bool verbose_mode = false;
+
 // HEX到BIN的转换函数
-bool convert_hex_to_bin(const std::string& hex_path, const std::string& bin_path, bool special_mode = false) {
+bool convert_hex_to_bin(const std::string& hex_path, const std::string& bin_path, bool special_mode = false, bool verbose = false) {
     std::ifstream hex_file(hex_path);
     if (!hex_file) {
         std::cerr << "Error: Cannot open input file: " << hex_path << std::endl;
@@ -47,7 +51,7 @@ bool convert_hex_to_bin(const std::string& hex_path, const std::string& bin_path
 
     std::vector<uint8_t> bin_buffer;
     uint32_t addr_h = 0;
-    uint32_t addr_end = 0;
+    uint32_t addr_end = 0;  // 记录数据在目标设备中的结束地址
 
     std::string line;
     while (std::getline(hex_file, line)) {
@@ -81,9 +85,27 @@ bool convert_hex_to_bin(const std::string& hex_path, const std::string& bin_path
 
             case 0x01: // 文件结束记录
                 std::cout << "Hex file successfully resolved\n";
-                std::cout << "addr_start: 0x" << std::hex << (addr_end + 1 - bin_buffer.size()) << std::dec << "\n";
-                std::cout << "addr_end: 0x" << std::hex << addr_end << std::dec << "\n";
-                std::cout << "Total size: " << bin_buffer.size() << " Bytes\n";
+                if (verbose) {
+                    // 显示原始HEX文件的地址信息
+                    std::cout << "Debug info:\n"
+                             << "  addr_start: 0x" << std::hex << (addr_end + 1 - bin_buffer.size()) << std::dec << "\n"
+                             << "  addr_end: 0x" << std::hex << addr_end << std::dec << "\n";
+                }
+                {
+                    // 计算实际文件大小（包括可能的1K填充）
+                    size_t total_size = bin_buffer.size() + (special_mode ? 1024 : 0);
+                    std::cout << "Total size: " << total_size << " Bytes";
+                    if (total_size >= 1024) {
+                        double kb_size = static_cast<double>(total_size) / 1024.0;
+                        if (kb_size >= 1024.0) {
+                            double mb_size = kb_size / 1024.0;
+                            std::cout << std::fixed << std::setprecision(2) << " (" << mb_size << " MB)";
+                        } else {
+                            std::cout << std::fixed << std::setprecision(2) << " (" << kb_size << " KB)";
+                        }
+                    }
+                    std::cout << "\n";
+                }
                 break;
 
             case 0x02: // 扩展段地址记录
@@ -144,7 +166,7 @@ void print_help(const char* program_name) {
               << "Author: " << HEX2BIN_AUTHOR << "\n"
               << "================================\n\n"
               << "Usage:\n"
-              << "  " << program_name << " <input.hex> [output.bin] [special_mode]\n"
+              << "  " << program_name << " <input.hex> [output.bin] [special_mode] [verbose]\n"
               << "  " << program_name << " --help\n"
               << "  " << program_name << " --version\n\n"
               << "Arguments:\n"
@@ -152,11 +174,13 @@ void print_help(const char* program_name) {
               << "  output.bin   Output binary file (optional)\n"
               << "              If not specified, output will be saved to Desktop\n"
               << "  special_mode Enable special mode by setting to 'true' (optional)\n"
-              << "              Adds 1024 zero bytes at the beginning of output file\n\n"
+              << "              Adds 1024 zero bytes at the beginning of output file\n"
+              << "  verbose      Show detailed address information (optional)\n\n"
               << "Examples:\n"
               << "  " << program_name << " input.hex\n"
               << "  " << program_name << " input.hex output.bin\n"
-              << "  " << program_name << " input.hex output.bin true\n";
+              << "  " << program_name << " input.hex output.bin true\n"
+              << "  " << program_name << " input.hex output.bin true verbose\n";
 }
 
 void print_version() {
@@ -219,8 +243,16 @@ int main(int argc, char* argv[]) {
         }
     }
 
+    // 添加详细模式选项
+    bool verbose_mode = false;
+    if (argc > 4) {
+        std::string verbose_arg = argv[4];
+        std::transform(verbose_arg.begin(), verbose_arg.end(), verbose_arg.begin(), ::tolower);
+        verbose_mode = (verbose_arg == "verbose");
+    }
+
     try {
-        if (!convert_hex_to_bin(arg1, output_file, special_mode)) {
+        if (!convert_hex_to_bin(arg1, output_file, special_mode, verbose_mode)) {
             return 1;
         }
     } catch (const std::exception& e) {
